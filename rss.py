@@ -1,7 +1,8 @@
 import feedparser
+from pprint import pprint
 
-rss_url = ['https://filestore.fortinet.com/fortiguard/rss/outbreakalert.xml', 'https://filestore.fortinet.com/fortiguard/rss/ir.xml', 'https://filestore.fortinet.com/fortiguard/rss/threatsignal.xml']
-filename = "intelligence_report.html"
+rss_url = ['https://feedexample.com/feed.xml'] #list with feeds
+filename = "intel_report.html"
 
 def get_rss():
     result_header = "<html lang=\"pt-BR\"><head><meta charset=\"UTF-8\"><title>Intelligence Report</title></head>\n"
@@ -10,10 +11,13 @@ def get_rss():
     for i in rss_url:
         rss_feed = feedparser.parse(i)
         if rss_feed.status == 200:
-            result_string+=(f"<p>Feed Title: %s</p>" %(rss_feed.feed.title))
-            result_string+=(f"Published: %s" %(rss_feed.feed.published))
+            result_string+=(f"<h2>Feed Title: %s</h2>" %(rss_feed.feed.title))
+            try:
+                result_string+=(f"<strong>Published: %s</strong>" %(rss_feed.feed.published))
+            except:
+                pass
             for entry in rss_feed.entries:
-                result_string+=("<p><strong>[+] %s - <a href=\"%s\" rel=\"noopener noreferrer nofollow\" target=\"_blank\">Link de refer&ecirc;ncia</a> [+]</strong></p>\n%s\n" %(entry.title, entry.link, entry.description))
+                result_string+=("<p><strong>[+] %s - <a href=\"%s\" rel=\"noopener noreferrer nofollow\" target=\"_blank\">Link de refer&ecirc;ncia</a> [+]</strong><br>%s</p>" %(entry.title, entry.link, entry.description))
         else:
             print("Failed to get RSS feed. Status code:", rss_feed.status)
     write_file(result_header+result_string+result_end)
