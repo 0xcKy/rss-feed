@@ -1,10 +1,11 @@
 import feedparser
-from pprint import pprint
+from datetime import datetime, date
+from pg import pg_db_write
 
 rss_url = ['https://feedexample.com/feed.xml'] #list with feeds
 filename = "intel_report.html"
 
-def get_rss():
+def write_rss_html():
     result_header =f"<html lang=\"pt-BR\"><head><meta charset=\"UTF-8\"><title>Intel Report - %s</title></head>\n" %(date.today())
     result_string = ""
     result_end = "\n</html>"
@@ -21,6 +22,27 @@ def get_rss():
         else:
             print("Failed to get RSS feed. Status code:", rss_feed.status)
     write_file(result_header+result_string+result_end)
+
+def get_rss():
+    for i in rss_url:
+        rss_feed = feedparser.parse(i)
+        if rss_feed.status == 200:
+            try:
+                for entry in rss_feed.entries:
+                    result = {
+                        "source": rss_feed.feed.title,
+                        "title": entry.title,
+                        "url": entry.link,
+                        "published": entry.published,
+                        "content": entry.description,
+                        "collected_at": datetime.now()
+                    }
+                    pg_db_write(result)
+            except:
+                pass
+        else:
+            print("Failed to get RSS feed. Status code:", rss_feed.status)
+
 
 def write_file(i):
     with open(str(filename), 'w+') as f:
