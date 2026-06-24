@@ -1,6 +1,6 @@
 import feedparser
 from datetime import datetime, date
-from pg import pg_db_write
+from pg import pg_connect
 
 rss_url = ['https://feedexample.com/feed.xml'] #list with feeds
 filename = "intel_report.html"
@@ -37,7 +37,7 @@ def get_rss():
                         "content": entry.description,
                         "collected_at": datetime.now()
                     }
-                    pg_db_write(result)
+                    pg_connect(result)
             except:
                 pass
         else:
