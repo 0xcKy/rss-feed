@@ -22,7 +22,7 @@ def create_table():
                                         id BIGSERIAL PRIMARY KEY,
                                         source VARCHAR(255),
                                         title TEXT NOT NULL,
-                                        url TEXT NOT NULL,
+                                        url TEXT NOT NULL UNIQUE,
                                         published TIMESTAMP,
                                         content TEXT,
                                         collected_at TIMESTAMP NOT NULL)'''
