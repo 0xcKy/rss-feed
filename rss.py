@@ -1,6 +1,14 @@
+#!/usr/bin/python
+
 import feedparser
+import argparse
 from datetime import datetime, date
 from pg import pg_connect
+
+parser = argparse.ArgumentParser() #create parser
+parser.add_argument("-w", "--writehtml", action="store_true", help="write html with downloaded feeds")
+parser.add_argument("-d", "--database", action="store_true", help="write feeds to database")
+argument = parser.parse_args()
 
 rss_url = ['https://feedexample.com/feed.xml'] #list with feeds
 filename = "intel_report.html"
@@ -38,6 +46,7 @@ def get_rss():
                         "collected_at": datetime.now()
                     }
                     pg_connect(result)
+                    print("db ok")
             except:
                 pass
         else:
@@ -51,4 +60,7 @@ def write_file(i):
         f.close()
 
 if __name__ == '__main__':
-    get_rss()
+    if (argument.writehtml):
+        write_rss_html()
+    if (argument.database):
+        get_rss()
